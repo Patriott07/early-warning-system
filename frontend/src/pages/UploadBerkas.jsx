@@ -42,7 +42,6 @@ export default function UploadBerkas() {
             formData.append('lokasi_pasar', location);
             formData.append('tanggal', month);
             formData.append('tanggal_awal', tanggalAwal);
-            // console.log('oke')
 
             const response = await fetch('/api/data/upload', {
                 method: 'POST',
@@ -56,15 +55,8 @@ export default function UploadBerkas() {
             }
 
             alert('File berhasil diupload!');
-            // Swal.fire({
-            //     title: "Succesfully complete!",
-            //     text: "File berhasil diupload!",
-            //     icon: "success"
-            //   }).then(() => {
-                //   });
-                window.location.reload();
-            // navigate('/datas');
-            // navigate('/data/pantau');
+            window.location.reload();
+       
 
         } catch (err) {
             setError(err.message || 'Terjadi kesalahan saat upload file');
