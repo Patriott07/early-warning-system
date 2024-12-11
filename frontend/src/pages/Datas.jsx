@@ -9,11 +9,10 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { cleanDatas, setDatas } from '../redux/redux-slicers/data.js';
 import Swal from 'sweetalert2';
+import {API_URL} from '../config.js';
 
 export default function Datas() {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [isLoading, setLoading] = useState(false);
+  
     const [modal, setModal] = useState(false);
     const [popupDetailFile, setPopupDetailFile] = useState(false);
     const [dataFile, setDataFile] = useState(null);
@@ -33,15 +32,16 @@ export default function Datas() {
         setFilesDetail(ArrayOfFiles);
         console.log({ ArrayOfFiles });
 
-
         setPopupDetailFile(true);
     }
 
     const fetchDataFiles = async () => {
         try {
             const url = selectedDate
-                ? `/api/data/getdatas?date=${selectedDate}`
-                : "/api/data/getdatas";
+                ? `${API_URL}/api/data/getdatas?date=${selectedDate}`
+                : `${API_URL}/api/data/getdatas`;
+                // ? `/api/data/getdatas?date=${selectedDate}`
+                // : `/api/data/getdatas`;
 
             const res = await fetch(url);
             const resdata = await res.json();
@@ -60,7 +60,7 @@ export default function Datas() {
         try {
             setModal(true);
             // const res = await fetch(`/api/data/content/${filesname}`);
-            const res = await fetch(`/api/data/contents`, {
+            const res = await fetch(`${API_URL}/api/data/contents`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function Datas() {
             confirmButtonText: "Yes, delete it!"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await fetch(`/api/data/content/${fileName}`, {
+                const res = await fetch(`${API_URL}/api/data/content/${fileName}`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "Application/json"

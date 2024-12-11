@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Side from "../component/Side";
+import {API_URL} from '../config.js';
 
 export default function UploadBerkas() {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function UploadBerkas() {
     const [fileName, setFileName] = useState(null);
     const [location, setLocation] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [tanggalAwal, setTanggalAwal] = useState(null);
+    const [tanggalAwal, setTanggalAwal] = useState(1);
     const [error, setError] = useState(null);
     const [month, setMonth] = useState(null);
 
@@ -43,7 +44,7 @@ export default function UploadBerkas() {
             formData.append('tanggal', month);
             formData.append('tanggal_awal', tanggalAwal);
 
-            const response = await fetch('/api/data/upload', {
+            const response = await fetch(`${API_URL}/api/data/upload`, {
                 method: 'POST',
                 body: formData,
             });

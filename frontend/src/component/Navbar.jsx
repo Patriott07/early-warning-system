@@ -16,7 +16,7 @@ export default function Navbar() {
                         <h1 className="blue-dark text">EarlyWarning
                             <span className="yellow-wine">System</span>
                         </h1>
-                        <p className="blue-dark mt-2 uppercase font-semibold text-xs md:text-sm">Sistem informasi Peringatan Kebutuhan Pokok Masyarakat (KEPOKMAS) <br /> Kabupaten Cirebon</p>
+                        <p className="blue-dark mt-2 uppercase font-semibold text-xs md:text-sm">Sistem Peringatan Kebutuhan Pokok Masyarakat (KEPOKMAS) <br /> Kabupaten Cirebon</p>
                     </div>
                 </div>
 
