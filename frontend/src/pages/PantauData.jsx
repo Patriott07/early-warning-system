@@ -1116,17 +1116,17 @@ export default function PantauData() {
 
 
     useEffect(() => {
-
         // console.log({ rata_rata_kvh })
         console.log({ datapantau })
         if (datapantau == null) {
-            window.location = '/datas';
+            // window.location = '/datas';
+            navigate('/datas');
         }
         // const rata_rata_kvh = HitungRataKVH(datapantau.datas, datapantau.detail_bulan.length);
         const rata_rata_kvh = datapantau.kvh_weekly
         setRataKVH(rata_rata_kvh);
         console.log({ datapantau })
-        setDatasPantau(datapantau.average);
+        setDatasPantau(datapantau.results[0].datas);
 
     }, [])
 
@@ -1194,7 +1194,12 @@ export default function PantauData() {
                             })}
                         </div>
                         <div className="text-sm font-semibold">
-                            TANGGAL :  {datapantau.startDate} - {datapantau.endDate}
+                            {datapantau ? (
+                                <>
+                                    TANGGAL: {datapantau.startDate} - {datapantau.endDate}
+                                </>
+
+                            ) : null}
                             {/* TANGGAL : {new Intl.DateTimeFormat('id-ID', {
                                 year: 'numeric',
                                 month: "long",
@@ -1227,10 +1232,10 @@ export default function PantauData() {
                                     <td className="border border-gray-400 px-3 py-2">No.</td>
                                     <td className="border border-gray-400 px-3 py-2">Jenis Bahan Pokok</td>
 
-                                    {Array.from({ length: datapantau.detailWeekDayStartEnd.length }).map((_val, _i) => (
+                                    {Array.from({ length: datapantau.results[0].countLength }).map((_val, _i) => (
                                         <>
-                                            <td className="border border-gray-400 px-3 py-2">{datapantau.periode} {_i + 1} ( {datapantau.detailWeekDayStartEnd[_i]['start']} - {datapantau.detailWeekDayStartEnd[_i]['end']} {datapantau.month} ) AVG (Rp.)</td>
-                                            <td className="border border-gray-400 px-3 py-2">{datapantau.periode} {_i + 1} ( {datapantau.detailWeekDayStartEnd[_i]['start']} - {datapantau.detailWeekDayStartEnd[_i]['end']} {datapantau.month} ) - Kvh</td>
+                                            <td className="border border-gray-400 px-3 py-2">{datapantau.periode} {_i + 1} ( {datapantau.results[0].detailDayWeek[_i]['start']} - {_i == datapantau.results[0].countLength - 1 ? datapantau.results[0].detailDayWeek[_i]['end'] : datapantau.results[0].detailDayWeek[_i]['end'] - 1} {datapantau.month} ) AVG (Rp.)</td>
+                                            <td className="border border-gray-400 px-3 py-2">{datapantau.periode} {_i + 1} ( {datapantau.results[0].detailDayWeek[_i]['start']} - {_i == datapantau.results[0].countLength - 1 ? datapantau.results[0].detailDayWeek[_i]['end'] : datapantau.results[0].detailDayWeek[_i]['end'] - 1 } {datapantau.month} ) - Kvh</td>
                                             {/* <td className="border border-gray-400 px-3 py-2">{datapantau.periode} {_i + 1} Bulan {datapantau.month}- Kvh</td> */}
                                         </>
                                     ))}
@@ -1248,11 +1253,11 @@ export default function PantauData() {
                                                         {_i + 1}
                                                     </th>
                                                     <th className="border-[#073B4C] border px-6 py-3 ">
-                                                        {datas[_i]['name']}
+                                                        {datas[_i]['Nama_pangan']}
                                                     </th>
-                                                    {Array.from({ length: datas[_i]['kvh'].length }).map((_val, __i) => (
+                                                    {Array.from({ length: datapantau.results[0].countLength }).map((_val, __i) => (
                                                         // <HandleColorTd price={datas[_i]['weekly'][__i]['prices']} kvh={datas[_i]['weekly'][__i]['kvh']} />
-                                                        <HandleColorTd price={datas[_i]['prices'][__i]} kvh={datas[_i]['kvh'][__i]} />
+                                                        <HandleColorTd price={datas[_i]['details'][__i]['Avg_rupiah']} kvh={datas[_i]['details'][__i]['Kvh']} />
 
                                                     ))}
 
@@ -1260,7 +1265,7 @@ export default function PantauData() {
                                                         {isPrint ? (
                                                             recomendations[val.name]
                                                         ) : (
-                                                            <input type="text" className="border-[#073B4C] border bg-white text-gray rounded-sm text-xs py-2 px-3 min-w-[200px]" onChange={() => handleInputChange(event, val.name)} />
+                                                            <input type="text" className="border-[#073B4C] border bg-white text-gray rounded-sm text-xs py-2 px-3 min-w-[190px]" onChange={() => handleInputChange(event, val.name)} />
                                                         )}
                                                     </td>
                                                 </tr>
@@ -1270,7 +1275,7 @@ export default function PantauData() {
 
                                     <tr className={datas.length % 2 == 0 ? "bg-white1" : "bg-white2"}>
                                         <td colSpan={2} className="px-6 uppercase font-bold border-[#073B4C] border py-2 whitespace-nowrap">
-                                            KVH RATA RATA {datas.type == "Minggu" ? "Mingguan" : "Bulanan"}
+                                            KVH RATA RATA MINGGUAN
                                         </td>
 
                                         {rataKVH.length > 0 ? (
@@ -1283,7 +1288,7 @@ export default function PantauData() {
                                             {isPrint ? (
                                                 recomendations["rata_rata"]
                                             ) : (
-                                                <input type="text" className="text-xs border-[#073B4C] border bg-white text-gray rounded-sm py-2 px-3 min-w-[200px]" onChange={() => handleInputChange(event, "rata_rata")} />
+                                                <input type="text" className="text-xs border-[#073B4C] border bg-white text-gray rounded-sm py-2 px-3 min-w-[190px]" onChange={() => handleInputChange(event, "rata_rata")} />
                                             )}
                                         </td>
                                     </tr>

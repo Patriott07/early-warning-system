@@ -44,7 +44,8 @@ export default function UploadBerkas() {
             formData.append('tanggal', month);
             formData.append('tanggal_awal', tanggalAwal);
 
-            const response = await fetch(`${API_URL}/api/data/upload`, {
+            const response = await fetch(`/api/data/upload`, {
+            // const response = await fetch(`${API_URL}/api/data/upload`, {
                 method: 'POST',
                 body: formData,
             });
@@ -56,9 +57,9 @@ export default function UploadBerkas() {
             }
 
             alert('File berhasil diupload!');
-            window.location.reload();
-       
-
+            // window.location.reload();
+            navigate('/datas');
+    
         } catch (err) {
             setError(err.message || 'Terjadi kesalahan saat upload file');
         } finally {

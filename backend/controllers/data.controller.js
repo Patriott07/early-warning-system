@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { readFile } from 'fs';
 import { fileURLToPath } from 'url';
+import { json } from 'express';
 
 // Buat folder untuk menyimpan file JSON jika belum ada
 const JSON_DIR = path.join(process.cwd(), 'uploads', 'json');
@@ -522,6 +523,8 @@ export const getJsonContent = async (req, res) => {
     const { files } = req.body; // is Array now :)
     console.log({ files })
 
+    // Sinmpan banyak value
+    let countLength = 0;
     let results = [];
     let countFile = 0;
     let transformedData;
@@ -540,13 +543,17 @@ export const getJsonContent = async (req, res) => {
         throw new Error('Invalid JSON structure');
       }
 
+      // Sinmpan banyak value
+      countLength = jsonContent.metadata.periode_mingguan.length
+
       // Transform data untuk format yang dibutuhkan frontend
       transformedData = {
         type: "Minggu",
         location: jsonContent.metadata.lokasi_pasar,
         startDate: jsonContent.metadata.start,
         endDate: jsonContent.metadata.end,
-        countLength: 4,
+        countLength,
+        detailDayWeek : jsonContent.metadata.periode_mingguan,
         detail_bulan: Array(4).fill(jsonContent.metadata.bulan),
         datas: KOMODITAS_LIST.map(komoditas => {
           // Cari data komoditas yang sesuai
@@ -564,7 +571,7 @@ export const getJsonContent = async (req, res) => {
           if (!item) {
             return {
               Nama_pangan: komoditas,
-              details: Array(4).fill().map((_, i) => ({
+              details: Array(countLength).fill().map((_, i) => ({
                 ...defaultWeekData,
                 title: `Minggu ${i + 1}`
               }))
@@ -573,8 +580,9 @@ export const getJsonContent = async (req, res) => {
 
           // Generate data mingguan
           const details = [];
-          for (let i = 1; i <= 4; i++) {
-            const weekData = item.harga_mingguan?.[`minggu_${i}`] || {};
+          for (let i = 1; i <= countLength; i++) {
+            const weekData = item.harga_mingguan?.[`minggu_${i}`] || {rata_rata : 0, kvh : 0};
+            console.log({weekData, i});
             details.push({
               title: `Minggu ${i}`,
               Avg_rupiah: parseFloat(weekData.rata_rata || 0),
@@ -589,6 +597,8 @@ export const getJsonContent = async (req, res) => {
         })
       };
 
+
+
       // Hitung rata-rata KVH mingguan
       transformedData.weeklyAverageKVH = Array(4).fill(0).map((_, weekIndex) => {
         const validKvhValues = transformedData.datas
@@ -601,6 +611,7 @@ export const getJsonContent = async (req, res) => {
       });
 
       countFile++;
+      console.log({transformedData})
       results.push(transformedData);
       // console.log(`Data ${countFile} : ${transformedData.datas[0]}`)
       // console.log('Transformed data:', transformedData);
@@ -631,6 +642,7 @@ export const getJsonContent = async (req, res) => {
     //---
     let komoditas = ["Beras Medium", "Beras Premium", "Bawang Merah", "Kacang Kedelai Lokal", "Kacang Kedelai Impor", "Cabe Merah Besar", "Cabe Merah Keriting", "Cabe Rawit Merah", "Cabe Rawit Hijau", "Minyak Goreng Sawit", "Tepung Terigu", "Gula Pasir", "Daging Ayam ras", "Telur Ayam Ras", "Daging Sapi", "Ikan Bandeng"];
 
+    let defaultVal = Array.from({length : countLength}).map((_i) => 0);
     let key = {
       "Beras Medium" : {
         harga : [0, 0, 0, 0],
@@ -638,7 +650,7 @@ export const getJsonContent = async (req, res) => {
       },
       "Beras Premium" : {
         harga : [0,0,0,0],
-        kvh : [0,0,0,]
+        kvh : [0,0,0,0]
       },
       "Bawang Merah" : {
         harga : [0,0,0,0],
@@ -717,6 +729,7 @@ export const getJsonContent = async (req, res) => {
     let lastResult = [
 
     ]
+    
     for(let i = 0; i < komoditas.length; i++){ // komoditas
       let prices = [];
       let kvh_s = [];
@@ -744,13 +757,14 @@ export const getJsonContent = async (req, res) => {
       })
     };
 
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < countLength; i++){
       let kvh_week = 0;
       for(let j = 0; j < komoditas.length; j++){
+        // console.log({cek : key[komoditas[j]]['kvh'][i], stat : typeof key[komoditas[j]]['kvh'][i] == 'number' && key[komoditas[j]]['kvh'][i] != null &&  !isNaN(key[komoditas[j]]['kvh'][i]), i})
         if(typeof key[komoditas[j]]['kvh'][i] == 'number' && key[komoditas[j]]['kvh'][i] != null &&  !isNaN(key[komoditas[j]]['kvh'][i])){
 
           kvh_week += typeof key[komoditas[j]]['kvh'][i] == 'number' ? key[komoditas[j]]['kvh'][i] : 0;
-    
+          console.log({kvh_week_val : key[komoditas[j]]['kvh'][i], i})
         }
       }
 

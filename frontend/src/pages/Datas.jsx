@@ -38,10 +38,10 @@ export default function Datas() {
     const fetchDataFiles = async () => {
         try {
             const url = selectedDate
-                ? `${API_URL}/api/data/getdatas?date=${selectedDate}`
-                : `${API_URL}/api/data/getdatas`;
-                // ? `/api/data/getdatas?date=${selectedDate}`
-                // : `/api/data/getdatas`;
+                // ? `${API_URL}/api/data/getdatas?date=${selectedDate}`
+                // : `${API_URL}/api/data/getdatas`;
+                ? `/api/data/getdatas?date=${selectedDate}`
+                : `/api/data/getdatas`;
 
             const res = await fetch(url);
             const resdata = await res.json();
@@ -60,7 +60,8 @@ export default function Datas() {
         try {
             setModal(true);
             // const res = await fetch(`/api/data/content/${filesname}`);
-            const res = await fetch(`${API_URL}/api/data/contents`, {
+            // const res = await fetch(`${API_URL}/api/data/contents`, {
+            const res = await fetch(`/api/data/contents`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -96,7 +97,8 @@ export default function Datas() {
             confirmButtonText: "Yes, delete it!"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await fetch(`${API_URL}/api/data/content/${fileName}`, {
+                const res = await fetch(`/api/data/content/${fileName}`, {
+                // const res = await fetch(`${API_URL}/api/data/content/${fileName}`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "Application/json"
@@ -111,7 +113,9 @@ export default function Datas() {
                         text: data.message,
                         icon: "success"
                     }).then(() => {
-                        window.location.reload();
+                        // window.location.reload();
+                        // navigate(0);
+                        navigate('/datas');
                     });
                 }
             }
